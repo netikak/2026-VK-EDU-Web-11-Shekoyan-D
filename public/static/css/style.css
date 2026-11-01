@@ -1,0 +1,129 @@
+/* Свои стили. Подключается ПОСЛЕ bootstrap.min.css.
+   Здесь только то, чего нет в компонентах и утилитах Bootstrap. */
+
+/* ---------- Шапка ---------- */
+.site-logo {
+    font-size: 2rem;
+}
+
+@media (min-width: 768px) {
+    .site-logo {
+        font-size: 2.5rem;
+    }
+}
+
+/* Поиск не уже 200px, иначе на узком экране перенесётся на новую строку */
+.search {
+    min-width: 200px;
+}
+
+/* Жёсткая тень у кнопок */
+.btn-ask {
+    box-shadow: 3px 3px 0 #111;
+}
+
+/* ---------- Аватары ---------- */
+.avatar {
+    flex-shrink: 0;               /* не сжимается в flex-ряду */
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border: 2px solid #111;
+    background: #e9ecef;
+}
+
+.avatar--small {
+    width: 50px;
+    height: 50px;
+}
+
+.avatar--medium {
+    width: 100px;
+    height: 100px;
+}
+
+.avatar--large {
+    width: 150px;
+    height: 150px;
+}
+
+/* ---------- Карточка вопроса и ответа ---------- */
+.question-card {
+    --bs-card-border-width: 2px;
+    --bs-card-border-color: #111;
+    --bs-card-border-radius: 0;
+}
+
+/* ---------- Виджет рейтинга (три состояния) ---------- */
+.rating__value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 30px;
+    padding: 0 4px;
+}
+
+.rating .btn {
+    font-size: 10px;
+}
+
+/* Лайк нажат */
+.rating .btn.is-liked {
+    background: #3a9a2f;
+    border-color: #3a9a2f;
+    color: #fff;
+}
+
+/* Дизлайк нажат */
+.rating .btn.is-disliked {
+    background: #c0392b;
+    border-color: #c0392b;
+    color: #fff;
+}
+
+/* ---------- Пагинация ---------- */
+.pagination {
+    --bs-pagination-color: #111;
+    --bs-pagination-hover-color: #111;
+    --bs-pagination-border-color: #111;
+    --bs-pagination-border-radius: 0;
+    --bs-pagination-active-bg: #111;
+    --bs-pagination-active-border-color: #111;
+    --bs-pagination-active-color: #fff;
+    --bs-pagination-disabled-color: #6c757d;
+    --bs-pagination-disabled-bg: #fff;
+    --bs-pagination-disabled-border-color: #111;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.pagination .page-item:not(:first-child) .page-link {
+    margin-left: 0;               /* убираем "слипание" соседних кнопок */
+}
+
+.pagination .page-link {
+    min-width: 36px;
+    text-align: center;
+    border-width: 2px;
+    box-shadow: 3px 3px 0 #111;
+}
+
+.pagination .page-item.active .page-link {
+    box-shadow: none;             /* текущая страница "вдавлена" */
+}
+
+.pagination .page-item.disabled .page-link {
+    box-shadow: none;
+}
+
+/* ---------- Поля форм ---------- */
+.form-control.field {
+    border: 2px solid #111;
+    border-radius: 0;
+}
+
+/* Поле с ошибкой: красная рамка (стандартный цвет Bootstrap) */
+.form-control.field.is-invalid {
+    border-color: var(--bs-form-invalid-border-color);
+}

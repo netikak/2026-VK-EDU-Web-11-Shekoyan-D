@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AskPupkin: регистрация</title>
+    <link rel="icon" type="image/svg+xml" href="static/img/favicon.svg">
+
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <div class="container flex-grow-1 pb-4">
+
+        <header class="navbar gap-3 px-0 py-3 border-bottom border-dark">
+            <a class="navbar-brand site-logo m-0" href="index.html">AskPupkin</a>
+
+            <form class="search flex-grow-1" action="#" role="search">
+                <label for="site-search" class="visually-hidden">Поиск по вопросам</label>
+                <input id="site-search" name="q" class="form-control rounded-pill border-dark border-2" type="search" placeholder="Search">
+            </form>
+
+            <div class="d-flex gap-3">
+                <a href="login.html">log in</a>
+                <a href="signup.html">register</a>
+            </div>
+        </header>
+
+        <div class="row gx-5 gy-4 pt-4">
+
+            <main class="col-lg-9">
+                <h1 class="fw-normal mb-4">Registration</h1>
+
+                <div class="alert alert-danger rounded-0" role="alert">
+                    Не удалось зарегистрироваться. Исправьте ошибки в форме.
+                </div>
+
+                <form action="#" method="post" enctype="multipart/form-data" novalidate>
+
+                    <div class="row mb-3">
+                        <label for="login" class="col-sm-3 col-form-label">Login</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="login" name="login" value="dr_pepper" maxlength="30" required autocomplete="username"
+                                   class="form-control field"
+                                   aria-describedby="login-help">
+                            <div id="login-help" class="form-text">От 3 до 30 символов: латиница, цифры и «_».</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="email" class="col-sm-3 col-form-label">Email</label>
+                        <div class="col-sm-6">
+                            <input type="email" id="email" name="email" value="dr.pepper@" maxlength="254" required autocomplete="email"
+                                   class="form-control field is-invalid"
+                                   aria-describedby="email-error">
+                            <div id="email-error" class="invalid-feedback">Вы ввели неверный email.</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <label for="nickname" class="col-sm-3 col-form-label">NickName</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="nickname" name="nickname" value="Dr. Pepper" maxlength="30" required
+                                   class="form-control field"
+                                   aria-describedby="nickname-help">
+                            <div id="nickname-help" class="form-text">Так вас будут видеть другие пользователи.</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="password" class="col-sm-3 col-form-label">Password</label>
+                        <div class="col-sm-6">
+                            <input type="password" id="password" name="password" maxlength="128" required autocomplete="new-password"
+                                   class="form-control field"
+                                   aria-describedby="password-help">
+                            <div id="password-help" class="form-text">Не менее 8 символов.</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="password-repeat" class="col-sm-3 col-form-label">Repeat password</label>
+                        <div class="col-sm-6">
+                            <input type="password" id="password-repeat" name="password_repeat" maxlength="128" required autocomplete="new-password"
+                                   class="form-control field is-invalid"
+                                   aria-describedby="password-repeat-error">
+                            <div id="password-repeat-error" class="invalid-feedback">Пароли не совпадают.</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="avatar" class="col-sm-3 col-form-label">Upload avatar</label>
+                        <div class="col-sm-6">
+                            <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg"
+                                   class="form-control field"
+                                   aria-describedby="avatar-help">
+                            <div id="avatar-help" class="form-text">JPG или PNG, не больше 2 МБ.</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-9 offset-sm-3">
+                            <button type="submit" class="btn btn-light btn-ask border border-2 border-dark rounded-0">Register!</button>
+                        </div>
+                    </div>
+
+                </form>
+            </main>
+
+            <aside class="col-lg-3 pt-lg-5">
+                <h2 class="fs-2 fw-normal mb-3">Popular Tags</h2>
+                <div class="d-flex flex-wrap row-gap-2 column-gap-3 mb-4">
+                    <a href="tag.html" class="text-dark text-decoration-none">perl</a>
+                    <a href="tag.html" class="text-danger text-decoration-none fs-5">python</a>
+                    <a href="tag.html" class="text-dark text-decoration-none">TechnoPark</a>
+                    <a href="tag.html" class="text-danger text-decoration-none fs-5">MySQL</a>
+                    <a href="tag.html" class="text-success text-decoration-none fs-5">django</a>
+                    <a href="tag.html" class="text-dark text-decoration-none">Mail.Ru</a>
+                    <a href="tag.html" class="text-dark text-decoration-none">Voloshin</a>
+                    <a href="tag.html" class="text-warning text-decoration-none small">Firefox</a>
+                </div>
+
+                <h2 class="fs-2 fw-normal mb-3">Best Members</h2>
+                <ul class="list-unstyled m-0 p-0">
+                    <li class="mb-3"><a href="#">Mr. Freeman</a></li>
+                    <li class="mb-3"><a href="#">Dr. House</a></li>
+                    <li class="mb-3"><a href="#">Bender</a></li>
+                    <li class="mb-3"><a href="#">Queen Victoria</a></li>
+                    <li class="mb-3"><a href="#">V. Pupkin</a></li>
+                </ul>
+            </aside>
+
+        </div>
+    </div>
+
+    <footer class="border-top border-dark py-3">
+        <div class="container d-flex flex-wrap justify-content-between gap-2 small">
+            <span>© 2026 AskPupkin</span>
+            <span>ДЗ 1</span>
+        </div>
+    </footer>
+
+    <script src="static/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
