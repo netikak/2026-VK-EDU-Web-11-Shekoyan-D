@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}AskPupkin: настройки профиля{% endblock %}
+
+{% block content %}
+<h1 class="fw-normal mb-4">Settings: {{ current_user.nickname }}</h1>
+
+{% include 'core/includes/form_error.html' with message=form_error %}
+
+<form action="{% url 'profile' %}" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    {% include 'core/includes/form_field.html' with field_id='login' label='Login' value=values.login error=errors.login help='От 3 до 30 символов: латиница, цифры и «_».' maxlength=30 required=True autocomplete='username' %}
+    {% include 'core/includes/form_field.html' with field_id='email' label='Email' type='email' value=values.email error=errors.email help='На этот адрес приходят уведомления.' maxlength=254 required=True autocomplete='email' %}
+    {% include 'core/includes/form_field.html' with field_id='nickname' label='NickName' value=values.nickname error=errors.nickname maxlength=30 required=True %}
+
+    {# Блок аватарки: текущая картинка и загрузка новой #}
+    <div class="row mb-3">
+        <label for="avatar" class="col-sm-3 col-form-label">Upload avatar</label>
+        <div class="col-sm-6">
+            <img class="avatar avatar--large mb-3 d-block" src="{% static 'core/img/avatar.svg' %}" alt="Текущий аватар {{ current_user.nickname }}">
+            <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" class="form-control field" aria-describedby="avatar-help">
+            <div id="avatar-help" class="form-text">JPG или PNG, не больше 2 МБ.</div>
+        </div>
+    </div>
+
+    {% include 'core/includes/form_submit.html' with text='Save' width=9 offset=3 %}
+</form>
+{% endblock %}

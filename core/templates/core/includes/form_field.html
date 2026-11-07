@@ -1,0 +1,17 @@
+{# Строка формы: подпись + поле + ошибка + подсказка.
+   Параметры: field_id, label, type, value, error, help, maxlength, required,
+   autocomplete, accept, placeholder, textarea, rows, label_cols, input_cols, mb #}
+<div class="row mb-{{ mb|default:3 }}">
+    <label for="{{ field_id }}" class="col-sm-{{ label_cols|default:3 }} col-form-label">{{ label }}</label>
+    <div class="col-sm-{{ input_cols|default:6 }}">
+        {% if textarea %}
+        <textarea id="{{ field_id }}" name="{{ field_id }}" rows="{{ rows|default:4 }}"{% if maxlength %} maxlength="{{ maxlength }}"{% endif %}{% if required %} required{% endif %}{% if placeholder %} placeholder="{{ placeholder }}"{% endif %}{% if help or error %} aria-describedby="{% if help %}{{ field_id }}-help{% endif %}{% if help and error %} {% endif %}{% if error %}{{ field_id }}-error{% endif %}"{% endif %}
+                  class="form-control field{% if error %} is-invalid{% endif %}">{{ value|default:'' }}</textarea>
+        {% else %}
+        <input type="{{ type|default:'text' }}" id="{{ field_id }}" name="{{ field_id }}"{% if value %} value="{{ value }}"{% endif %}{% if maxlength %} maxlength="{{ maxlength }}"{% endif %}{% if required %} required{% endif %}{% if autocomplete %} autocomplete="{{ autocomplete }}"{% endif %}{% if accept %} accept="{{ accept }}"{% endif %}{% if placeholder %} placeholder="{{ placeholder }}"{% endif %}{% if help or error %} aria-describedby="{% if help %}{{ field_id }}-help{% endif %}{% if help and error %} {% endif %}{% if error %}{{ field_id }}-error{% endif %}"{% endif %}
+               class="form-control field{% if error %} is-invalid{% endif %}">
+        {% endif %}
+        {% if error %}<div id="{{ field_id }}-error" class="invalid-feedback">{{ error }}</div>{% endif %}
+        {% if help %}<div id="{{ field_id }}-help" class="form-text">{{ help }}</div>{% endif %}
+    </div>
+</div>
