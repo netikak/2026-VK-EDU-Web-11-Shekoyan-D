@@ -1,6 +1,3 @@
-{# Строка формы: подпись + поле + ошибка + подсказка.
-   Параметры: field_id, label, type, value, error, help, maxlength, required,
-   autocomplete, accept, placeholder, textarea, rows, label_cols, input_cols, mb #}
 <div class="row mb-{{ mb|default:3 }}">
     <label for="{{ field_id }}" class="col-sm-{{ label_cols|default:3 }} col-form-label">{{ label }}</label>
     <div class="col-sm-{{ input_cols|default:6 }}">
