@@ -1,0 +1,7 @@
+<div class="rating d-flex border border-2 border-dark" role="group" aria-label="{{ label }}">
+    <span class="rating__value">{{ rating }}</span>
+    <div class="btn-group-vertical border-start border-2 border-dark">
+        <button type="button" class="btn btn-sm btn-light rounded-0 py-0 px-1{% if state == 'liked' %} is-liked{% endif %}" aria-label="Нравится" aria-pressed="{% if state == 'liked' %}true{% else %}false{% endif %}">▲</button>
+        <button type="button" class="btn btn-sm btn-light rounded-0 py-0 px-1{% if state == 'disliked' %} is-disliked{% endif %}" aria-label="Не нравится" aria-pressed="{% if state == 'disliked' %}true{% else %}false{% endif %}">▼</button>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+
+{# Общий шаблон списка вопросов: от него наследуются index, hot и tag #}
+{% block content %}
+{% block list_header %}{% endblock %}
+
+{% for question in page %}
+    {% include 'questions/includes/question_card.html' %}
+{% empty %}
+    <p>Вопросов пока нет.</p>
+{% endfor %}
+
+{% include 'core/includes/pagination.html' with aria_label='Страницы вопросов' %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'core/base.html' %}
+
+{% block title %}AskPupkin: новый вопрос{% endblock %}
+
+{% block content %}
+<h1 class="fw-normal mb-4">New Question</h1>
+
+{% include 'core/includes/form_error.html' with message=form_error %}
+
+<form action="{% url 'ask' %}" method="post" novalidate>
+    {% csrf_token %}
+
+    {% include 'core/includes/form_field.html' with field_id='title' label='Title' label_cols=2 input_cols=10 value=values.title error=errors.title help='Коротко опишите суть вопроса. Максимум 100 символов.' maxlength=100 required=True placeholder='How to build a moon park ?' %}
+    {% include 'core/includes/form_field.html' with field_id='text' label='Text' label_cols=2 input_cols=10 textarea=True rows=12 value=values.text error=errors.text help='Опишите проблему подробно. Максимум 2000 символов.' maxlength=2000 required=True placeholder='Really, how ? Have no idea about it' %}
+    {% include 'core/includes/form_field.html' with field_id='tags' label='Tags' label_cols=2 input_cols=10 value=values.tags error=errors.tags help='Теги через запятую, не более 5.' %}
+
+    {% include 'core/includes/form_submit.html' with text='ASK!' width=10 offset=2 %}
+</form>
+{% endblock %}

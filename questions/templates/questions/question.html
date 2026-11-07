@@ -1,0 +1,51 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}AskPupkin: {{ question.title }}{% endblock %}
+
+{% block content %}
+{# Вопрос: на узком экране аватар над текстом, с sm и выше в ряд #}
+<article class="d-flex flex-column flex-sm-row gap-4">
+    <div class="d-flex flex-column align-items-start gap-3">
+        <img class="avatar avatar--large" src="{% static 'core/img/avatar.svg' %}" alt="Аватар автора вопроса">
+        {% include 'questions/includes/rating.html' with rating=question.rating state=question.rating_state label='Рейтинг вопроса' %}
+    </div>
+    <div class="flex-grow-1 min-w-0">
+        <h1 class="fw-normal">{{ question.title }}</h1>
+        <p>{{ question.full_text }}</p>
+        <div class="d-flex flex-wrap align-items-center gap-2 gap-sm-4">
+            <div class="d-flex flex-wrap gap-2 min-w-0">
+                <span>Tags:</span>
+                {% for tag in question.tags %}
+                <a href="{% url 'tag' tag %}">{{ tag }}</a>
+                {% endfor %}
+            </div>
+            <span>Ответов: {{ question.answers_count }}</span>
+        </div>
+    </div>
+</article>
+
+<hr class="my-4 border-dark opacity-100">
+
+<section aria-label="Ответы">
+    {% for answer in page %}
+        {% include 'questions/includes/answer_card.html' %}
+    {% empty %}
+        <p>Ответов пока нет. Станьте первым!</p>
+    {% endfor %}
+</section>
+
+{% include 'core/includes/pagination.html' with aria_label='Страницы ответов' %}
+
+<hr class="my-4 border-dark opacity-100">
+
+<form action="{% url 'question' question.id %}" method="post">
+    {% csrf_token %}
+    <label for="answer" class="visually-hidden">Ваш ответ</label>
+    <textarea id="answer" name="answer" rows="4" maxlength="2000" required
+              class="form-control field mb-1" placeholder="Enter your answer here.."
+              aria-describedby="answer-help"></textarea>
+    <div id="answer-help" class="form-text mb-3">Максимум 2000 символов.</div>
+    <button type="submit" class="btn btn-secondary btn-ask rounded-0 border border-2 border-dark">Answer</button>
+</form>
+{% endblock %}

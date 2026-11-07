@@ -1,0 +1,10 @@
+{% extends 'questions/question_list.html' %}
+
+{% block title %}AskPupkin: новые вопросы{% endblock %}
+
+{% block list_header %}
+<div class="d-flex flex-wrap align-items-baseline gap-3 mb-4">
+    <h1 class="fw-normal m-0">New Questions</h1>
+    <a href="{% url 'hot' %}">Hot Questions</a>
+</div>
+{% endblock %}
