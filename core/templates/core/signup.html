@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+
+{% block title %}AskPupkin: регистрация{% endblock %}
+
+{% block content %}
+<h1 class="fw-normal mb-4">Registration</h1>
+
+{% include 'core/includes/form_error.html' with message=form_error %}
+
+{# enctype="multipart/form-data" обязателен, если в форме есть загрузка файла #}
+<form action="{% url 'signup' %}" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    {% include 'core/includes/form_field.html' with field_id='login' label='Login' value=values.login error=errors.login help='От 3 до 30 символов: латиница, цифры и «_».' maxlength=30 required=True autocomplete='username' %}
+    {% include 'core/includes/form_field.html' with field_id='email' label='Email' type='email' value=values.email error=errors.email maxlength=254 required=True autocomplete='email' %}
+    {% include 'core/includes/form_field.html' with field_id='nickname' label='NickName' mb=4 value=values.nickname error=errors.nickname help='Так вас будут видеть другие пользователи.' maxlength=30 required=True %}
+    {% include 'core/includes/form_field.html' with field_id='password' label='Password' type='password' error=errors.password help='Не менее 8 символов.' maxlength=128 required=True autocomplete='new-password' %}
+    {% include 'core/includes/form_field.html' with field_id='password_repeat' label='Repeat password' type='password' error=errors.password_repeat maxlength=128 required=True autocomplete='new-password' %}
+    {% include 'core/includes/form_field.html' with field_id='avatar' label='Upload avatar' type='file' accept='image/png, image/jpeg' error=errors.avatar help='JPG или PNG, не больше 2 МБ.' %}
+
+    {% include 'core/includes/form_submit.html' with text='Register!' width=9 offset=3 %}
+</form>
+{% endblock %}

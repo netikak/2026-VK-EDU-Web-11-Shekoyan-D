@@ -1,0 +1,29 @@
+{% load static %}
+<header class="navbar gap-3 px-0 py-3 border-bottom border-dark">
+    <a class="navbar-brand site-logo m-0" href="{% url 'index' %}">AskPupkin</a>
+
+    <form class="search flex-grow-1" action="#" role="search">
+        <label for="site-search" class="visually-hidden">Поиск по вопросам</label>
+        <input id="site-search" name="q" class="form-control rounded-pill border-dark border-2" type="search" placeholder="Search">
+    </form>
+
+    {% if not hide_ask %}
+    <a class="btn btn-success btn-ask rounded-0 fw-bold" href="{% url 'ask' %}">ASK!</a>
+    {% endif %}
+
+    {% if current_user %}
+    <div class="d-flex align-items-center gap-2">
+        <img class="avatar avatar--small" src="{% static 'core/img/avatar.svg' %}" alt="Аватар {{ current_user.nickname }}">
+        <div>
+            <div>{{ current_user.nickname }}</div>
+            <a href="{% url 'profile' %}" class="me-2">settings</a>
+            <a href="{% url 'login' %}">log out</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="d-flex gap-3">
+        <a href="{% url 'login' %}">log in</a>
+        <a href="{% url 'signup' %}">register</a>
+    </div>
+    {% endif %}
+</header>

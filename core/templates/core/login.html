@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% block title %}AskPupkin: вход{% endblock %}
+
+{% block content %}
+<h1 class="fw-normal mb-4">Log In</h1>
+
+{% include 'core/includes/form_error.html' with message=form_error %}
+
+<form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+
+    {% include 'core/includes/form_field.html' with field_id='login' label='Login' value=values.login error=errors.login help='Логин, указанный при регистрации.' maxlength=30 required=True autocomplete='username' placeholder='Enter your login here' %}
+    {% include 'core/includes/form_field.html' with field_id='password' label='Password' type='password' error=errors.password help='Не менее 8 символов.' maxlength=128 required=True autocomplete='current-password' %}
+
+    {% include 'core/includes/form_submit.html' with text='Log in!' width=9 offset=3 %}
+
+    <div class="row">
+        <div class="col-sm-9 offset-sm-3">
+            <a href="{% url 'signup' %}">create new account</a>
+        </div>
+    </div>
+</form>
+{% endblock %}
