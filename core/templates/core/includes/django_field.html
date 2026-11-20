@@ -1,0 +1,8 @@
+<div class="row mb-3">
+    <label class="col-sm-{{ label_cols|default:3 }} col-form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    <div class="col-sm-{{ input_cols|default:9 }}">
+        {{ field }}
+        {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+        {% for error in field.errors %}<div class="invalid-feedback d-block" role="alert">{{ error }}</div>{% endfor %}
+    </div>
+</div>

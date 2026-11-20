@@ -119,3 +119,7 @@ if DEBUG and 'test' not in sys.argv[1:]:
     MIDDLEWARE.insert(1, 'debug_toolbar.middleware.DebugToolbarMiddleware')
     INTERNAL_IPS = ['127.0.0.1', '::1']
     DEBUG_TOOLBAR_CONFIG = {'SHOW_COLLAPSED': True}
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'index'
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'

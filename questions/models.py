@@ -1,10 +1,27 @@
+from pathlib import Path
+from uuid import uuid4
+
 from django.conf import settings
 from django.core.validators import RegexValidator
 from django.db import models
-from django.db.models import Count, OuterRef, Subquery, Sum, Value
+from django.db.models import Count, OuterRef, Q, Subquery, Sum, Value
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils import timezone
+
+
+ANSWERS_PER_PAGE = 5
+
+
+def avatar_upload_to(instance, filename):
+    return f'avatars/{uuid4().hex}{Path(filename).suffix.lower()}'
+
+
+def viewer_vote(model, relation, user):
+    if user is None or not user.is_authenticated:
+        return Value(0)
+    vote = model.objects.filter(**{relation: OuterRef('pk'), 'user': user}).values('value')
+    return Coalesce(Subquery(vote), Value(0))
 
 
 def related_total(model, relation, aggregate):
@@ -17,32 +34,38 @@ class QuestionQuerySet(models.QuerySet):
     def with_rating(self):
         return self.annotate(rating=related_total(QuestionLike, 'question', Sum('value')))
 
-    def for_display(self):
+    def for_display(self, user=None):
         return (
             self.with_rating()
-            .annotate(answers_count=related_total(Answer, 'question', Count('pk')))
+            .annotate(
+                answers_count=related_total(Answer, 'question', Count('pk')),
+                your_vote=viewer_vote(QuestionLike, 'question', user),
+            )
             .select_related('author__profile')
             .prefetch_related('tags')
         )
 
 
 class QuestionManager(models.Manager.from_queryset(QuestionQuerySet)):
-    def new(self):
-        return self.for_display().order_by('-created_at', '-pk')
+    def new(self, user=None):
+        return self.for_display(user).order_by('-created_at', '-pk')
 
-    def hot(self):
-        return self.for_display().order_by('-rating', '-created_at', '-pk')
+    def hot(self, user=None):
+        return self.for_display(user).order_by('-rating', '-created_at', '-pk')
 
-    def by_tag(self, tag):
-        return self.new().filter(tags=tag)
+    def by_tag(self, tag, user=None):
+        return self.new(user).filter(tags=tag)
 
 
 class AnswerQuerySet(models.QuerySet):
     def with_rating(self):
         return self.annotate(rating=related_total(AnswerLike, 'answer', Sum('value')))
 
-    def for_display(self):
-        return self.with_rating().select_related('author__profile')
+    def for_display(self, user=None):
+        return (
+            self.with_rating().annotate(your_vote=viewer_vote(AnswerLike, 'answer', user))
+            .select_related('author__profile')
+        )
 
 
 class Profile(models.Model):
@@ -50,7 +73,7 @@ class Profile(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile',
         verbose_name='Пользователь',
     )
-    avatar = models.ImageField(upload_to='avatars/', blank=True, verbose_name='Аватар')
+    avatar = models.ImageField(upload_to=avatar_upload_to, blank=True, verbose_name='Аватар')
     created_at = models.DateTimeField(default=timezone.now, verbose_name='Дата создания')
 
     class Meta:
@@ -145,6 +168,15 @@ class Answer(models.Model):
 
     def __str__(self):
         return f'Ответ №{self.pk}'
+
+
+    def get_absolute_url(self):
+        older_answers = self.question.answers.filter(
+            Q(created_at__lt=self.created_at)
+            | Q(created_at=self.created_at, pk__lt=self.pk)
+        )
+        page = older_answers.count() // ANSWERS_PER_PAGE + 1
+        return f'{self.question.get_absolute_url()}?page={page}#answer-{self.pk}'
 
 
 class Vote(models.Model):

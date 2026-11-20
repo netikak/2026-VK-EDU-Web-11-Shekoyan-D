@@ -1,0 +1,3 @@
+{% load static %}
+<img class="avatar {{ avatar_class }}" src="{% if member.profile.avatar %}{{ member.profile.avatar.url }}{% else %}{% static 'core/img/avatar.svg' %}{% endif %}"
+     alt="{{ avatar_alt|default:'Аватар пользователя' }}" decoding="async">
