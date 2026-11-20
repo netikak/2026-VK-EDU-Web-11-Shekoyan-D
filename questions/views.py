@@ -1,46 +1,31 @@
-from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
-from core.stubs import CURRENT_USER
 from core.utils import paginate
+from .models import Question, Tag
 
-from . import stubs
+
+def question_list(request, template, questions, **context):
+    return render(request, template, {'page': paginate(questions, request), **context})
 
 
 def index(request):
-    page = paginate(stubs.QUESTIONS, request)
-    context = {'page': page, 'current_user': CURRENT_USER}
-    return render(request, 'questions/index.html', context)
+    return question_list(request, 'questions/index.html', Question.objects.new())
 
 
 def hot(request):
-    hot_questions = sorted(stubs.QUESTIONS, key=lambda q: (-q['rating'], q['id']))
-    page = paginate(hot_questions, request)
-    context = {'page': page, 'current_user': CURRENT_USER}
-    return render(request, 'questions/hot.html', context)
+    return question_list(request, 'questions/hot.html', Question.objects.hot())
 
 
 def tag_questions(request, tag_name):
-    tagged = [q for q in stubs.QUESTIONS if tag_name in q['tags']]
-    page = paginate(tagged, request)
-    context = {'page': page, 'tag_name': tag_name, 'current_user': CURRENT_USER}
-    return render(request, 'questions/tag.html', context)
+    tag = get_object_or_404(Tag, name=tag_name)
+    return question_list(request, 'questions/tag.html', Question.objects.by_tag(tag), tag_name=tag.name)
 
 
 def question_detail(request, question_id):
-    question = next((q for q in stubs.QUESTIONS if q['id'] == question_id), None)
-    if question is None:
-        raise Http404('Вопрос не найден')
-    page = paginate(stubs.make_answers(question), request, per_page=5)
-    context = {'question': question, 'page': page, 'current_user': None}
-    return render(request, 'questions/question.html', context)
+    question = get_object_or_404(Question.objects.for_display(), pk=question_id)
+    page = paginate(question.answers.for_display(), request, per_page=5)
+    return render(request, 'questions/question.html', {'question': question, 'page': page})
 
 
 def ask(request):
-    context = {
-        'current_user': None,
-        'form_error': 'Не удалось опубликовать вопрос. Исправьте ошибки в форме.',
-        'errors': {'tags': 'Можно указать не более 5 тегов.'},
-        'values': {'tags': 'moon, park, puzzle, space, rocket, base'},
-    }
-    return render(request, 'questions/ask.html', context)
+    return render(request, 'questions/ask.html')

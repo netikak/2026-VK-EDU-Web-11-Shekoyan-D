@@ -20,8 +20,6 @@ def paginate(objects_list, request, per_page=10):
         too_small = int(page_number) < 1
         page = paginator.page(1 if too_small else paginator.num_pages)
 
-    # Данные для шаблона пагинатора: номера страниц с многоточием
-    # вида [1, 2, '…', 9, 10, 11, '…', 52, 53]
     page.elided_range = list(
         paginator.get_elided_page_range(page.number, on_each_side=2, on_ends=1)
     )
