@@ -1,5 +1,4 @@
 {% extends 'core/base.html' %}
-{% load static %}
 
 {% block title %}AskPupkin: {{ question.title }}{% endblock %}
 
@@ -7,17 +6,17 @@
 {# Вопрос: на узком экране аватар над текстом, с sm и выше в ряд #}
 <article class="d-flex flex-column flex-sm-row gap-4">
     <div class="d-flex flex-column align-items-start gap-3">
-        <img class="avatar avatar--large" src="{% static 'core/img/avatar.svg' %}" alt="Аватар автора вопроса">
-        {% include 'questions/includes/rating.html' with rating=question.rating state=question.rating_state label='Рейтинг вопроса' %}
+        {% include 'core/includes/avatar.html' with member=question.author avatar_class='avatar--large' %}
+        {% include 'questions/includes/rating.html' with entity=question endpoint='ajax:vote_question' label='Рейтинг вопроса' %}
     </div>
     <div class="flex-grow-1 min-w-0">
         <h1 class="fw-normal">{{ question.title }}</h1>
-        <p>{{ question.full_text }}</p>
+        <p>{{ question.text|linebreaksbr }}</p>
         <div class="d-flex flex-wrap align-items-center gap-2 gap-sm-4">
             <div class="d-flex flex-wrap gap-2 min-w-0">
                 <span>Tags:</span>
-                {% for tag in question.tags %}
-                <a href="{% url 'tag' tag %}">{{ tag }}</a>
+                {% for tag in question.tags.all %}
+                <a href="{{ tag.get_absolute_url }}">{{ tag }}</a>
                 {% endfor %}
             </div>
             <span>Ответов: {{ question.answers_count }}</span>
@@ -39,13 +38,17 @@
 
 <hr class="my-4 border-dark opacity-100">
 
-<form action="{% url 'question' question.id %}" method="post">
+{% if user.is_authenticated %}
+<form method="post" id="answer-form" novalidate>
     {% csrf_token %}
-    <label for="answer" class="visually-hidden">Ваш ответ</label>
-    <textarea id="answer" name="answer" rows="4" maxlength="2000" required
-              class="form-control field mb-1" placeholder="Enter your answer here.."
-              aria-describedby="answer-help"></textarea>
-    <div id="answer-help" class="form-text mb-3">Максимум 2000 символов.</div>
-    <button type="submit" class="btn btn-secondary btn-ask rounded-0 border border-2 border-dark">Answer</button>
+    {% include 'core/includes/django_errors.html' %}
+    {% include 'core/includes/django_field.html' with field=form.text %}
+    {% include 'core/includes/form_submit.html' with text='Answer' width=9 offset=3 %}
 </form>
+{% else %}
+<div title="Войдите, чтобы ответить" tabindex="0">
+    <button type="button" class="btn btn-secondary" disabled>Answer</button>
+    <a class="ms-2" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Войдите, чтобы ответить</a>
+</div>
+{% endif %}
 {% endblock %}

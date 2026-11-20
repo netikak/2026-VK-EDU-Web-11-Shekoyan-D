@@ -1,46 +1,55 @@
-from django.http import Http404
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
 
-from core.stubs import CURRENT_USER
 from core.utils import paginate
+from .forms import AnswerForm, QuestionForm
+from .models import ANSWERS_PER_PAGE, Question, Tag
 
-from . import stubs
+
+def question_list(request, template, questions, **context):
+    return render(request, template, {'page': paginate(questions, request), **context})
 
 
 def index(request):
-    page = paginate(stubs.QUESTIONS, request)
-    context = {'page': page, 'current_user': CURRENT_USER}
-    return render(request, 'questions/index.html', context)
+    return question_list(request, 'questions/index.html', Question.objects.new(request.user))
 
 
 def hot(request):
-    hot_questions = sorted(stubs.QUESTIONS, key=lambda q: (-q['rating'], q['id']))
-    page = paginate(hot_questions, request)
-    context = {'page': page, 'current_user': CURRENT_USER}
-    return render(request, 'questions/hot.html', context)
+    return question_list(request, 'questions/hot.html', Question.objects.hot(request.user))
 
 
 def tag_questions(request, tag_name):
-    tagged = [q for q in stubs.QUESTIONS if tag_name in q['tags']]
-    page = paginate(tagged, request)
-    context = {'page': page, 'tag_name': tag_name, 'current_user': CURRENT_USER}
-    return render(request, 'questions/tag.html', context)
+    tag = get_object_or_404(Tag, name=tag_name)
+    questions = Question.objects.by_tag(tag, request.user)
+    return question_list(request, 'questions/tag.html', questions, tag_name=tag.name)
 
 
+def render_question(request, question, form):
+    page = paginate(question.answers.for_display(request.user), request, per_page=ANSWERS_PER_PAGE)
+    return render(request, 'questions/question.html', {'question': question, 'page': page, 'form': form})
+
+
+@login_required
+def add_answer(request, question):
+    form = AnswerForm(request.POST)
+    if form.is_valid():
+        return redirect(form.save(question=question, author=request.user))
+    return render_question(request, question, form)
+
+
+@require_http_methods(['GET', 'HEAD', 'POST'])
 def question_detail(request, question_id):
-    question = next((q for q in stubs.QUESTIONS if q['id'] == question_id), None)
-    if question is None:
-        raise Http404('Вопрос не найден')
-    page = paginate(stubs.make_answers(question), request, per_page=5)
-    context = {'question': question, 'page': page, 'current_user': None}
-    return render(request, 'questions/question.html', context)
+    question = get_object_or_404(Question.objects.for_display(request.user), pk=question_id)
+    if request.method == 'POST':
+        return add_answer(request, question)
+    return render_question(request, question, AnswerForm())
 
 
+@login_required
+@require_http_methods(['GET', 'HEAD', 'POST'])
 def ask(request):
-    context = {
-        'current_user': None,
-        'form_error': 'Не удалось опубликовать вопрос. Исправьте ошибки в форме.',
-        'errors': {'tags': 'Можно указать не более 5 тегов.'},
-        'values': {'tags': 'moon, park, puzzle, space, rocket, base'},
-    }
-    return render(request, 'questions/ask.html', context)
+    form = QuestionForm(request.POST if request.method == 'POST' else None)
+    if form.is_valid():
+        return redirect(form.save(author=request.user))
+    return render(request, 'questions/ask.html', {'form': form})

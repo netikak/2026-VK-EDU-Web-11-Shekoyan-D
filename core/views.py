@@ -1,37 +1,38 @@
-from django.shortcuts import render
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.views.csrf import csrf_failure as default_csrf_failure
+from django.views.decorators.http import require_http_methods
 
-from .stubs import CURRENT_USER
-
-
-def login_view(request):
-    context = {
-        'current_user': None,
-        'hide_ask': True,  # на странице входа кнопки ASK! в шапке нет
-        # Заглушка ошибки формы: потом её будет формировать форма Django
-        'form_error': 'Вы ввели неправильный логин или пароль.',
-    }
-    return render(request, 'core/login.html', context)
+from .forms import ProfileForm, SignupForm
 
 
+@require_http_methods(['GET', 'HEAD', 'POST'])
 def signup_view(request):
-    context = {
-        'current_user': None,
-        'hide_ask': True,
-        'form_error': 'Не удалось зарегистрироваться. Исправьте ошибки в форме.',
-        'errors': {
-            'email': 'Вы ввели неверный email.',
-            'password_repeat': 'Пароли не совпадают.',
-        },
-        'values': {'login': 'dr_pepper', 'email': 'dr.pepper@', 'nickname': 'Dr. Pepper'},
-    }
-    return render(request, 'core/signup.html', context)
+    form = SignupForm(request.POST if request.method == 'POST' else None)
+    if form.is_valid():
+        login(request, form.save())
+        return redirect('index')
+    return render(request, 'core/signup.html', {'form': form, 'hide_ask': True})
 
 
+@login_required
+@require_http_methods(['GET', 'HEAD', 'POST'])
 def profile_view(request):
-    context = {
-        'current_user': CURRENT_USER,
-        'form_error': 'Не удалось сохранить изменения. Исправьте ошибки в форме.',
-        'errors': {'nickname': 'Этот ник уже занят.'},
-        'values': {'login': 'dr_pepper', 'email': 'drpepper@mail.ru', 'nickname': 'Dr. Pepper'},
-    }
-    return render(request, 'core/profile.html', context)
+    form = ProfileForm(
+        request.user,
+        request.POST if request.method == 'POST' else None,
+        request.FILES if request.method == 'POST' else None,
+    )
+    if form.is_valid():
+        form.save()
+        return redirect('profile')
+    return render(request, 'core/profile.html', {'form': form})
+
+
+def csrf_failure(request, reason=''):
+    match = request.resolver_match
+    if match and match.namespace == 'ajax':
+        return JsonResponse({'error': 'Не удалось проверить CSRF-токен. Обновите страницу.'}, status=403)
+    return default_csrf_failure(request, reason=reason)

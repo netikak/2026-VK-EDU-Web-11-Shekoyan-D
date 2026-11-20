@@ -1,7 +1,14 @@
-<div class="rating d-flex border border-2 border-dark" role="group" aria-label="{{ label }}">
-    <span class="rating__value">{{ rating }}</span>
-    <div class="btn-group-vertical border-start border-2 border-dark">
-        <button type="button" class="btn btn-sm btn-light rounded-0 py-0 px-1{% if state == 'liked' %} is-liked{% endif %}" aria-label="Нравится" aria-pressed="{% if state == 'liked' %}true{% else %}false{% endif %}">▲</button>
-        <button type="button" class="btn btn-sm btn-light rounded-0 py-0 px-1{% if state == 'disliked' %} is-disliked{% endif %}" aria-label="Не нравится" aria-pressed="{% if state == 'disliked' %}true{% else %}false{% endif %}">▼</button>
+{% url endpoint as vote_url %}
+<div class="rating d-flex border border-2 border-dark" role="group" aria-label="{{ label }}"
+     {% if user.is_authenticated %}data-vote-url="{{ vote_url }}" data-target-id="{{ entity.pk }}"{% endif %}>
+    <span class="rating__value" aria-live="polite">{{ entity.rating }}</span>
+    <div class="btn-group-vertical border-start border-2 border-dark"
+         {% if not user.is_authenticated %}title="Войдите, чтобы оценить" tabindex="0"{% endif %}>
+        <button type="button" class="btn btn-sm btn-light rounded-0 py-0 px-1{% if entity.your_vote == 1 %} is-liked{% endif %}"
+                aria-label="Нравится" aria-pressed="{% if entity.your_vote == 1 %}true{% else %}false{% endif %}"
+                data-value="1"{% if not user.is_authenticated or entity.your_vote == 1 %} disabled{% endif %}>▲</button>
+        <button type="button" class="btn btn-sm btn-light rounded-0 py-0 px-1{% if entity.your_vote == -1 %} is-disliked{% endif %}"
+                aria-label="Не нравится" aria-pressed="{% if entity.your_vote == -1 %}true{% else %}false{% endif %}"
+                data-value="-1"{% if not user.is_authenticated or entity.your_vote == -1 %} disabled{% endif %}>▼</button>
     </div>
 </div>
